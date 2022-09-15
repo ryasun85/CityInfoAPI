@@ -1,11 +1,19 @@
+using Microsoft.AspNetCore.StaticFiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.ReturnHttpNotAcceptable = true;
+}).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
 var app = builder.Build();
 
@@ -18,8 +26,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting(); //.NET 5 way p1
+
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints => 
+{
+    endpoints.MapControllers(); //.NET 5 way p2
+});
+//app.MapControllers(); //.NET 6 default 
+
+//app.Run(async (context) =>
+//{
+//    await context.Response.WriteAsync("Hello World!");
+//});
 
 app.Run();
