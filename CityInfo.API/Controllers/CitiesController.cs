@@ -8,6 +8,8 @@ namespace CityInfo.API.Controllers
     //[Route("api/[controller]")] will match to controller name
     public class CitiesController : ControllerBase
         {
+
+
         //    [HttpGet]
         //    public JsonResult GetCities() 
         //    {
@@ -18,12 +20,16 @@ namespace CityInfo.API.Controllers
         //            //    new{id =2, Name = "Antwerp"}
         //            //});
         //    }
-
+        private readonly CitiesDataStore _citiesDataStore;
+        public CitiesController(CitiesDataStore citiesDataStore)
+        {
+            _citiesDataStore = citiesDataStore ?? throw new ArgumentNullException(nameof(citiesDataStore));
+        }
 
         [HttpGet]
         public ActionResult<IEnumerable<CityDto>> GetCities()
             {
-                return Ok(CitiesDataStore.Current.Cities);
+                return Ok(_citiesDataStore.Cities);
        
             }
             //[HttpGet("{id}")]
@@ -36,7 +42,7 @@ namespace CityInfo.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<CityDto> GetCity(int id)
         {
-            var cityToReturn = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id);
+            var cityToReturn = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == id);
             if (cityToReturn == null)
             {
                 return NotFound();
