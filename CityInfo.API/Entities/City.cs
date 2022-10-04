@@ -18,7 +18,7 @@ namespace CityInfo.API.Entities
         public string? Description { get; set; }
         
         //Initialize to empty list to avoid null ref when points of intrested not loaded yet 
-        public ICollection<PointOfInterestDto> PointsOfInterest { get; set; } = new List<PointOfInterestDto>();
+        public ICollection<PointOfInterest> PointsOfInterest { get; set; } = new List<PointOfInterest>();
 
         //to always have name 
         public City(string name)
