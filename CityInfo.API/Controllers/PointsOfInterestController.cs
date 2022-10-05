@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CityInfo.API.Models;
 using CityInfo.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ namespace CityInfo.API.Controllers
 {
     //[Route("api/[controller]")]
     [Route("api/cities/{cityId}/pointsOfInterest")]
+    [Authorize(Policy ="MustBeFromManchester")]
     [ApiController]
     public class PointsOfInterestController : ControllerBase
     {
@@ -58,6 +60,14 @@ namespace CityInfo.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId)
         {
+            //only user who lives in city can acceds - demo 
+            var cityName = User.Claims.FirstOrDefault(c => c.Type == "city")?.Value;
+            //TODO test if Manch works
+            if(!await _cityInfoRepository.CityNameMatchesCityId(cityName, cityId))
+            {
+                return Forbid();
+            }
+
             if (!await _cityInfoRepository.CityExistsAsync(cityId))
             {
                 _logger.LogInformation(
