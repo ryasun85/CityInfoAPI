@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace CityInfo.API.Controllers
 {
     //[Route("api/[controller]")]
-    [Route("api/cities/{cityId}/pointsOfInterest")]
+    [Route("api/v{version:apiVersion}/cities/{cityId}/pointsOfInterest")]
     [Authorize(Policy ="MustBeFromManchester")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class PointsOfInterestController : ControllerBase
     {
@@ -61,12 +62,12 @@ namespace CityInfo.API.Controllers
         public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId)
         {
             //only user who lives in city can acceds - demo 
-            var cityName = User.Claims.FirstOrDefault(c => c.Type == "city")?.Value;
-            //TODO test if Manch works
-            if(!await _cityInfoRepository.CityNameMatchesCityId(cityName, cityId))
-            {
-                return Forbid();
-            }
+            //var cityName = User.Claims.FirstOrDefault(c => c.Type == "city")?.Value;
+            ////TODO test if Manch works
+            //if(!await _cityInfoRepository.CityNameMatchesCityId(cityName, cityId))
+            //{
+            //    return Forbid();
+            //}
 
             if (!await _cityInfoRepository.CityExistsAsync(cityId))
             {

@@ -9,7 +9,9 @@ namespace CityInfo.API.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("api/cities")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/cities")]
     //[Route("api/[controller]")] will match to controller name
     public class CitiesController : ControllerBase
     {
@@ -84,8 +86,19 @@ namespace CityInfo.API.Controllers
         //    return new JsonResult(CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
         //}
 
+
+        /// <summary>
+        /// Get a city by Id
+        /// </summary>
+        /// <param name="id">The Id of the city to get</param>
+        /// <param name="includePointsOfInterest">Include or not include points of Interest with the city</param>
+        /// <returns>An IActionResult</returns>
+        /// <response code="200">Returns the requested city</response>
         [HttpGet("{id}")]
         //public async Task<ActionResult<CityDto>> GetCity(int id, bool includePointsOfInterest=false)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false)
         {
             //Without Automapper
